@@ -9,14 +9,14 @@ export function PipelineNav() {
 
   if (steps.length === 0) {
     return (
-      <aside className="w-48 shrink-0 border-r border-[var(--studio-border)] p-4">
+      <div className="p-4">
         <p className="text-sm text-[var(--studio-text-muted)]">No pipeline loaded</p>
-      </aside>
+      </div>
     );
   }
 
   return (
-    <aside className="w-48 shrink-0 border-r border-[var(--studio-border)] p-2">
+    <div className="p-2">
       <ul className="flex flex-col gap-1">
         {steps.map((step) => (
           <li key={step.step_number}>
@@ -43,6 +43,6 @@ export function PipelineNav() {
           </li>
         ))}
       </ul>
-    </aside>
+    </div>
   );
 }
