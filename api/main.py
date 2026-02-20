@@ -1,11 +1,11 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from database import init_db
-from routers.assets import router as assets_router
-from routers.projects import router as projects_router
-from routers.profiles import router as profiles_router
-from routers.compose import router as compose_router
+from api.database import init_db
+from api.routers.assets import router as assets_router
+from api.routers.projects import router as projects_router
+from api.routers.profiles import router as profiles_router
+from api.routers.compose import router as compose_router
 
 
 @asynccontextmanager
@@ -18,7 +18,7 @@ app = FastAPI(title="Studio API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origin_regex=r"http://localhost:\d+",
     allow_methods=["*"],
     allow_headers=["*"],
 )

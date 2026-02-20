@@ -37,7 +37,6 @@ export function generateGrid(
     "4q": { rows: 2, cols: 2 },
     "asym-lr": { rows: 1, cols: 2, ratios: [0.6, 0.4] },
     "asym-tb": { rows: 2, cols: 1, ratios: [0.7, 0.3] },
-    single: { rows: 1, cols: 1 },
   };
 
   const config = presets[preset];

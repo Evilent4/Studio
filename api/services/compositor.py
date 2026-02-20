@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
-from config import STORAGE_DIR
+from api.config import STORAGE_DIR
 
 
 def compose_zones(zones: list[dict], canvas_width: int, canvas_height: int) -> Image.Image:
@@ -58,6 +58,7 @@ def _compose_text(canvas: Image.Image, content: dict, x: int, y: int, w: int, h:
     size = content.get("size", 24)
     colour = content.get("colour", "#e8e8e8")
     alignment = content.get("alignment", "center")
+    padding = 10
 
     try:
         font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", size)
@@ -67,19 +68,56 @@ def _compose_text(canvas: Image.Image, content: dict, x: int, y: int, w: int, h:
         except OSError:
             font = ImageFont.load_default()
 
-    bbox = draw.textbbox((0, 0), text, font=font)
-    text_w = bbox[2] - bbox[0]
-    text_h = bbox[3] - bbox[1]
+    max_width = w - padding * 2
+    lines = _wrap_text(draw, text, font, max_width)
 
-    if alignment == "center":
-        tx = x + (w - text_w) // 2
-    elif alignment == "right":
-        tx = x + w - text_w - 10
-    else:
-        tx = x + 10
+    # Measure each line and total block height
+    line_metrics = []
+    for line in lines:
+        bbox = draw.textbbox((0, 0), line, font=font)
+        line_w = bbox[2] - bbox[0]
+        line_h = bbox[3] - bbox[1]
+        line_metrics.append((line, line_w, line_h))
 
-    ty = y + (h - text_h) // 2
-    draw.text((tx, ty), text, fill=colour, font=font)
+    total_height = sum(m[2] for m in line_metrics)
+    line_spacing = max(int(size * 0.25), 2)
+    total_height += line_spacing * (len(line_metrics) - 1) if len(line_metrics) > 1 else 0
+
+    # Center the text block vertically in the zone
+    ty = y + (h - total_height) // 2
+
+    for line, line_w, line_h in line_metrics:
+        if alignment == "center":
+            tx = x + (w - line_w) // 2
+        elif alignment == "right":
+            tx = x + w - line_w - padding
+        else:
+            tx = x + padding
+
+        draw.text((tx, ty), line, fill=colour, font=font)
+        ty += line_h + line_spacing
+
+
+def _wrap_text(draw: ImageDraw.ImageDraw, text: str, font, max_width: int) -> list[str]:
+    """Break text into lines that fit within max_width using word wrapping."""
+    words = text.split()
+    if not words:
+        return [""]
+
+    lines: list[str] = []
+    current_line = words[0]
+
+    for word in words[1:]:
+        test_line = current_line + " " + word
+        bbox = draw.textbbox((0, 0), test_line, font=font)
+        if (bbox[2] - bbox[0]) <= max_width:
+            current_line = test_line
+        else:
+            lines.append(current_line)
+            current_line = word
+
+    lines.append(current_line)
+    return lines
 
 
 def _compose_solid(canvas: Image.Image, content: dict, x: int, y: int, w: int, h: int):

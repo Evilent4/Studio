@@ -3,8 +3,8 @@ import json
 from pathlib import Path
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 import aiosqlite
-from config import STORAGE_DIR
-from database import get_db_dep
+from api.config import STORAGE_DIR
+from api.database import get_db_dep
 
 router = APIRouter(prefix="/assets", tags=["assets"])
 
@@ -76,6 +76,8 @@ async def get_asset(asset_id: str, db: aiosqlite.Connection = Depends(get_db_dep
 
     result = dict(asset)
     result.pop("path", None)
+    if result.get("metadata") and isinstance(result["metadata"], str):
+        result["metadata"] = json.loads(result["metadata"])
     return result
 
 
