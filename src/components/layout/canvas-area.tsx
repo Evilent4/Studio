@@ -47,7 +47,7 @@ export function CanvasArea() {
           canvasHeight={format.height}
         />
       ) : (
-        <span className="text-[var(--studio-text-muted)] text-sm">
+        <span className="text-[13px] text-[var(--studio-text-muted)]">
           Select a format to view the canvas
         </span>
       )}

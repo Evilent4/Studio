@@ -38,7 +38,7 @@ export function GridStep() {
   if (!format) {
     return (
       <div className="flex flex-col gap-4 p-4">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--studio-text-secondary)]">
+        <h2 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--studio-text-muted)]">
           Grid
         </h2>
         <p className="text-xs text-[var(--studio-text-muted)]">
@@ -49,37 +49,40 @@ export function GridStep() {
   }
 
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--studio-text-secondary)]">
+    <div className="flex flex-col gap-5 p-4">
+      <h2 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--studio-text-muted)]">
         Grid Layout
       </h2>
 
       <div className="grid grid-cols-2 gap-2">
         {(Object.entries(GRID_PRESETS) as [GridPresetKey, (typeof GRID_PRESETS)[GridPresetKey]][]).map(
-          ([key, preset]) => (
-            <button
-              key={key}
-              onClick={() => handleSelect(key)}
-              className={cn(
-                "flex flex-col items-center gap-1 rounded-md border p-3 text-center transition-colors",
-                selected === key
-                  ? "border-[var(--studio-accent)] bg-[var(--studio-surface)]"
-                  : "border-[var(--studio-border)] bg-[var(--studio-surface-2)] hover:border-[var(--studio-border-hover)]"
-              )}
-            >
-              <GridPreview presetKey={key} />
-              <span className="text-xs font-medium text-[var(--studio-text)]">
-                {preset.label}
-              </span>
-            </button>
-          )
+          ([key, preset]) => {
+            const isSelected = selected === key;
+            return (
+              <button
+                key={key}
+                onClick={() => handleSelect(key)}
+                className={cn(
+                  "flex flex-col items-center gap-2.5 rounded-[var(--studio-radius-lg)] border p-3.5 text-center",
+                  isSelected
+                    ? "border-[var(--studio-accent)]/60 bg-[var(--studio-accent-muted)] shadow-[0_0_0_1px_var(--studio-accent)]/20"
+                    : "border-[var(--studio-border)] bg-[var(--studio-surface-2)] hover:border-[var(--studio-border-hover)] hover:bg-[var(--studio-surface-hover)]"
+                )}
+              >
+                <GridPreview presetKey={key} isSelected={isSelected} />
+                <span className="text-xs font-medium text-[var(--studio-text)]">
+                  {preset.label}
+                </span>
+              </button>
+            );
+          }
         )}
       </div>
 
       <button
         onClick={handleNext}
         disabled={!selected}
-        className="mt-2 w-full rounded-md bg-[var(--studio-accent)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--studio-accent-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="mt-1 w-full rounded-[var(--studio-radius-md)] bg-[var(--studio-accent)] px-4 py-2.5 text-[13px] font-medium text-white hover:bg-[var(--studio-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Next
       </button>
@@ -88,45 +91,52 @@ export function GridStep() {
 }
 
 /** Small visual preview of a grid preset */
-function GridPreview({ presetKey }: { presetKey: GridPresetKey }) {
+function GridPreview({ presetKey, isSelected }: { presetKey: GridPresetKey; isSelected: boolean }) {
+  const blockClass = cn(
+    "rounded-[2px]",
+    isSelected
+      ? "bg-[var(--studio-accent)]/30"
+      : "bg-[var(--studio-border-hover)]"
+  );
+
   const previewMap: Record<GridPresetKey, React.ReactNode> = {
     "2h": (
-      <div className="flex h-8 w-12 flex-col gap-0.5">
-        <div className="flex-1 rounded-sm bg-[var(--studio-text-muted)]" />
-        <div className="flex-1 rounded-sm bg-[var(--studio-text-muted)]" />
+      <div className="flex h-10 w-14 flex-col gap-0.5">
+        <div className={cn("flex-1", blockClass)} />
+        <div className={cn("flex-1", blockClass)} />
       </div>
     ),
     "2v": (
-      <div className="flex h-8 w-12 flex-row gap-0.5">
-        <div className="flex-1 rounded-sm bg-[var(--studio-text-muted)]" />
-        <div className="flex-1 rounded-sm bg-[var(--studio-text-muted)]" />
+      <div className="flex h-10 w-14 flex-row gap-0.5">
+        <div className={cn("flex-1", blockClass)} />
+        <div className={cn("flex-1", blockClass)} />
       </div>
     ),
     "3r": (
-      <div className="flex h-8 w-12 flex-col gap-0.5">
-        <div className="flex-1 rounded-sm bg-[var(--studio-text-muted)]" />
-        <div className="flex-1 rounded-sm bg-[var(--studio-text-muted)]" />
-        <div className="flex-1 rounded-sm bg-[var(--studio-text-muted)]" />
+      <div className="flex h-10 w-14 flex-col gap-0.5">
+        <div className={cn("flex-1", blockClass)} />
+        <div className={cn("flex-1", blockClass)} />
+        <div className={cn("flex-1", blockClass)} />
       </div>
     ),
     "4q": (
-      <div className="grid h-8 w-12 grid-cols-2 grid-rows-2 gap-0.5">
-        <div className="rounded-sm bg-[var(--studio-text-muted)]" />
-        <div className="rounded-sm bg-[var(--studio-text-muted)]" />
-        <div className="rounded-sm bg-[var(--studio-text-muted)]" />
-        <div className="rounded-sm bg-[var(--studio-text-muted)]" />
+      <div className="grid h-10 w-14 grid-cols-2 grid-rows-2 gap-0.5">
+        <div className={blockClass} />
+        <div className={blockClass} />
+        <div className={blockClass} />
+        <div className={blockClass} />
       </div>
     ),
     "asym-lr": (
-      <div className="flex h-8 w-12 flex-row gap-0.5">
-        <div className="basis-3/5 rounded-sm bg-[var(--studio-text-muted)]" />
-        <div className="basis-2/5 rounded-sm bg-[var(--studio-text-muted)]" />
+      <div className="flex h-10 w-14 flex-row gap-0.5">
+        <div className={cn("basis-3/5", blockClass)} />
+        <div className={cn("basis-2/5", blockClass)} />
       </div>
     ),
     "asym-tb": (
-      <div className="flex h-8 w-12 flex-col gap-0.5">
-        <div className="basis-[70%] rounded-sm bg-[var(--studio-text-muted)]" />
-        <div className="basis-[30%] rounded-sm bg-[var(--studio-text-muted)]" />
+      <div className="flex h-10 w-14 flex-col gap-0.5">
+        <div className={cn("basis-[70%]", blockClass)} />
+        <div className={cn("basis-[30%]", blockClass)} />
       </div>
     ),
   };

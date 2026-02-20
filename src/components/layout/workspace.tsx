@@ -10,7 +10,7 @@ export function Workspace() {
     <div className="flex flex-1 flex-col overflow-hidden">
       <div className="flex flex-1 overflow-hidden">
         {/* Left panel: pipeline nav + step UI */}
-        <aside className="flex w-72 shrink-0 flex-col border-r border-[var(--studio-border)]">
+        <aside className="flex w-72 shrink-0 flex-col border-r border-[var(--studio-border)] bg-[var(--studio-surface)]">
           <PipelineNav />
           <div className="flex-1 overflow-auto border-t border-[var(--studio-border)]">
             <StaticPipeline />

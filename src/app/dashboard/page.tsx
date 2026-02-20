@@ -14,17 +14,22 @@ export default function DashboardPage() {
   return (
     <div className="flex h-screen flex-col">
       <Header />
-      <main className="flex-1 overflow-auto p-8">
+      <main className="flex-1 overflow-auto px-10 py-10">
         <h1 className="text-2xl font-semibold tracking-tight">Projects</h1>
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <p className="mt-1.5 text-sm text-[var(--studio-text-secondary)]">
+          Start a new creative pipeline
+        </p>
+        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {PIPELINE_TYPES.map(({ type, label, icon: Icon }) => (
             <Link
               key={type}
               href={`/project/new?type=${type}`}
-              className="flex flex-col items-center gap-3 rounded-lg border border-[var(--studio-border)] bg-[var(--studio-surface)] p-8 transition-colors hover:border-[var(--studio-border-hover)] hover:bg-[var(--studio-surface-2)]"
+              className="group flex flex-col items-center gap-4 rounded-[var(--studio-radius-lg)] border border-[var(--studio-border)] bg-[var(--studio-surface)] p-10 hover:border-[var(--studio-border-hover)] hover:bg-[var(--studio-surface-2)] hover:shadow-[0_0_0_1px_var(--studio-border-hover),0_4px_24px_rgba(0,0,0,0.3)] hover:-translate-y-0.5"
             >
-              <Icon className="h-10 w-10 text-[var(--studio-accent)]" />
-              <span className="text-sm font-medium">{label}</span>
+              <div className="flex h-14 w-14 items-center justify-center rounded-[var(--studio-radius-lg)] bg-[var(--studio-accent-muted)] group-hover:bg-[var(--studio-accent)]/15">
+                <Icon className="h-7 w-7 text-[var(--studio-accent)]" strokeWidth={1.5} />
+              </div>
+              <span className="text-sm font-medium tracking-tight">{label}</span>
             </Link>
           ))}
         </div>

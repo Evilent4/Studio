@@ -50,8 +50,8 @@ export function BriefStep() {
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--studio-text-secondary)]">
+    <div className="flex flex-col gap-5 p-4">
+      <h2 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--studio-text-muted)]">
         Brief
       </h2>
 
@@ -64,7 +64,7 @@ export function BriefStep() {
           onChange={(e) => setBrief(e.target.value)}
           placeholder="Describe the creative direction, mood, and purpose..."
           rows={5}
-          className="w-full rounded-md border border-[var(--studio-border)] bg-[var(--studio-surface-2)] px-3 py-2 text-sm text-[var(--studio-text)] placeholder:text-[var(--studio-text-muted)] focus:border-[var(--studio-border-hover)] focus:outline-none resize-none"
+          className="w-full rounded-[var(--studio-radius-md)] border border-[var(--studio-border)] bg-[var(--studio-surface-2)] px-3 py-2.5 text-sm leading-relaxed text-[var(--studio-text)] placeholder:text-[var(--studio-text-muted)] focus:border-[var(--studio-accent)]/40 focus:outline-none resize-none"
         />
       </div>
 
@@ -75,8 +75,10 @@ export function BriefStep() {
         <div
           {...getRootProps()}
           className={cn(
-            "flex flex-col items-center justify-center gap-2 rounded-md border border-dashed border-[var(--studio-border)] bg-[var(--studio-surface-2)] p-6 cursor-pointer transition-colors",
-            isDragActive && "border-[var(--studio-accent)] bg-[var(--studio-surface)]"
+            "flex flex-col items-center justify-center gap-2.5 rounded-[var(--studio-radius-lg)] border border-dashed bg-[var(--studio-surface-2)] p-7 cursor-pointer",
+            isDragActive
+              ? "border-[var(--studio-accent)] bg-[var(--studio-accent-muted)]"
+              : "border-[var(--studio-border)] hover:border-[var(--studio-border-hover)] hover:bg-[var(--studio-surface-hover)]"
           )}
         >
           <input {...getInputProps()} />
@@ -84,7 +86,7 @@ export function BriefStep() {
             <span className="text-xs text-[var(--studio-text-muted)]">Uploading...</span>
           ) : (
             <>
-              <Upload className="h-5 w-5 text-[var(--studio-text-muted)]" />
+              <Upload className="h-5 w-5 text-[var(--studio-text-muted)]" strokeWidth={1.5} />
               <span className="text-xs text-[var(--studio-text-muted)]">
                 Drop images here or click to browse
               </span>
@@ -101,7 +103,7 @@ export function BriefStep() {
 
       <button
         onClick={handleNext}
-        className="mt-2 w-full rounded-md bg-[var(--studio-accent)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--studio-accent-hover)] transition-colors"
+        className="mt-1 w-full rounded-[var(--studio-radius-md)] bg-[var(--studio-accent)] px-4 py-2.5 text-[13px] font-medium text-white hover:bg-[var(--studio-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Next
       </button>

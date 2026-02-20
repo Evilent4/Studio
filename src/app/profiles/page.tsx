@@ -96,18 +96,18 @@ export default function ProfilesPage() {
   return (
     <div className="flex h-screen flex-col">
       <Header />
-      <main className="flex-1 overflow-auto p-8">
-        <div className="mx-auto max-w-4xl space-y-8">
+      <main className="flex-1 overflow-auto px-10 py-10">
+        <div className="mx-auto max-w-4xl space-y-10">
           {/* New Profile Form */}
           <section>
             <h1 className="text-2xl font-semibold tracking-tight">Style Profiles</h1>
-            <p className="mt-1 text-sm text-[var(--studio-text-secondary)]">
+            <p className="mt-1.5 text-sm text-[var(--studio-text-secondary)]">
               Upload reference images to extract your visual style.
             </p>
 
-            <form onSubmit={handleCreateAndAnalyze} className="mt-6 space-y-4">
+            <form onSubmit={handleCreateAndAnalyze} className="mt-8 space-y-5">
               <div className="space-y-2">
-                <label htmlFor="profile-name" className="text-sm font-medium">
+                <label htmlFor="profile-name" className="text-xs font-medium text-[var(--studio-text-secondary)]">
                   Profile Name
                 </label>
                 <input
@@ -117,21 +117,21 @@ export default function ProfilesPage() {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Brutalist Dark, Warm Editorial..."
                   required
-                  className="w-full rounded-md border border-[var(--studio-border)] bg-[var(--studio-surface-2)] px-3 py-2 text-sm text-[var(--studio-text)] placeholder:text-[var(--studio-text-muted)] focus:border-[var(--studio-border-hover)] focus:outline-none"
+                  className="w-full rounded-[var(--studio-radius-md)] border border-[var(--studio-border)] bg-[var(--studio-surface-2)] px-3 py-2.5 text-sm text-[var(--studio-text)] placeholder:text-[var(--studio-text-muted)] focus:border-[var(--studio-accent)]/40 focus:outline-none"
                 />
               </div>
 
               {/* Dropzone */}
               <div
                 {...getRootProps()}
-                className={`flex min-h-[160px] cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed transition-colors ${
+                className={`flex min-h-[160px] cursor-pointer flex-col items-center justify-center gap-3 rounded-[var(--studio-radius-lg)] border-2 border-dashed ${
                   isDragActive
-                    ? "border-[var(--studio-accent)] bg-[var(--studio-accent)]/5"
-                    : "border-[var(--studio-border)] hover:border-[var(--studio-border-hover)]"
+                    ? "border-[var(--studio-accent)] bg-[var(--studio-accent-muted)]"
+                    : "border-[var(--studio-border)] hover:border-[var(--studio-border-hover)] hover:bg-[var(--studio-surface-hover)]"
                 }`}
               >
                 <input {...getInputProps()} />
-                <Upload className="h-8 w-8 text-[var(--studio-text-muted)]" />
+                <Upload className="h-8 w-8 text-[var(--studio-text-muted)]" strokeWidth={1.5} />
                 <p className="text-sm text-[var(--studio-text-secondary)]">
                   {isDragActive
                     ? "Drop images here..."
@@ -150,7 +150,7 @@ export default function ProfilesPage() {
                       <img
                         src={src}
                         alt={`Reference ${i + 1}`}
-                        className="h-20 w-20 rounded-md border border-[var(--studio-border)] object-cover"
+                        className="h-20 w-20 rounded-[var(--studio-radius-md)] border border-[var(--studio-border)] object-cover"
                       />
                       <button
                         type="button"
@@ -171,7 +171,7 @@ export default function ProfilesPage() {
               <button
                 type="submit"
                 disabled={creating || analyzing || !name.trim() || files.length === 0}
-                className="flex items-center gap-2 rounded-md bg-[var(--studio-accent)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--studio-accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex items-center gap-2 rounded-[var(--studio-radius-md)] bg-[var(--studio-accent)] px-5 py-2.5 text-[13px] font-medium text-white hover:bg-[var(--studio-accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {creating ? (
                   <>
@@ -195,7 +195,7 @@ export default function ProfilesPage() {
 
           {/* Existing Profiles */}
           {profiles.length > 0 && (
-            <section className="space-y-4">
+            <section className="space-y-5">
               <h2 className="text-lg font-semibold tracking-tight">
                 Existing Profiles
               </h2>
@@ -223,23 +223,25 @@ function ProfileCard({ profile }: { profile: ProfileListItem }) {
     profile.typography && profile.typography.headline?.family;
 
   return (
-    <div className="rounded-lg border border-[var(--studio-border)] bg-[var(--studio-surface)] p-4 transition-colors hover:border-[var(--studio-border-hover)]">
+    <div className="rounded-[var(--studio-radius-lg)] border border-[var(--studio-border)] bg-[var(--studio-surface)] p-5 hover:border-[var(--studio-border-hover)] hover:shadow-[0_2px_16px_rgba(0,0,0,0.2)]">
       <div className="flex items-start justify-between">
         <div>
-          <h3 className="font-medium">{profile.name}</h3>
+          <h3 className="font-medium tracking-tight">{profile.name}</h3>
           <p className="mt-0.5 text-xs text-[var(--studio-text-muted)]">
             {profile.source_images?.length || 0} source image
             {(profile.source_images?.length || 0) !== 1 ? "s" : ""}
           </p>
         </div>
         {hasColours && (
-          <Check className="h-4 w-4 text-[var(--studio-success)]" />
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--studio-success-muted)]">
+            <Check className="h-3 w-3 text-[var(--studio-success)]" strokeWidth={2.5} />
+          </span>
         )}
       </div>
 
       {/* Colour swatches */}
       {hasColours && (
-        <div className="mt-3 space-y-2">
+        <div className="mt-4 space-y-2">
           <ColourRow label="Primary" colours={profile.colours.primary} />
           <ColourRow label="Accent" colours={profile.colours.accent} />
           <ColourRow label="Background" colours={profile.colours.background} />
@@ -249,7 +251,7 @@ function ProfileCard({ profile }: { profile: ProfileListItem }) {
 
       {/* Typography preview */}
       {hasTypography && (
-        <div className="mt-3 flex items-center gap-3 text-xs text-[var(--studio-text-secondary)]">
+        <div className="mt-4 flex items-center gap-2.5 text-xs text-[var(--studio-text-secondary)]">
           <Type className="h-3.5 w-3.5" />
           <span>
             {profile.typography.headline.family} /{" "}
@@ -260,7 +262,7 @@ function ProfileCard({ profile }: { profile: ProfileListItem }) {
 
       {/* Mood indicators */}
       {profile.mood && profile.mood.warmth !== undefined && (
-        <div className="mt-3 grid grid-cols-4 gap-1">
+        <div className="mt-4 grid grid-cols-4 gap-2">
           <MoodBar label="Warm" value={profile.mood.warmth} />
           <MoodBar label="Dense" value={profile.mood.density} />
           <MoodBar label="Bright" value={profile.mood.brightness} />
@@ -275,14 +277,14 @@ function ColourRow({ label, colours }: { label: string; colours?: string[] }) {
   if (!colours || colours.length === 0) return null;
   return (
     <div className="flex items-center gap-2">
-      <span className="w-16 text-xs text-[var(--studio-text-muted)]">
+      <span className="w-16 text-[10px] uppercase tracking-wider text-[var(--studio-text-muted)]">
         {label}
       </span>
       <div className="flex gap-1">
         {colours.map((hex, i) => (
           <div
             key={i}
-            className="h-5 w-5 rounded-sm border border-[var(--studio-border)]"
+            className="h-5 w-5 rounded-[3px] border border-[var(--studio-border)]"
             style={{ backgroundColor: hex }}
             title={hex}
           />
@@ -296,7 +298,7 @@ function MoodBar({ label, value }: { label: string; value: number }) {
   // value ranges from -1 to 1, normalize to 0-100%
   const pct = Math.round(((value + 1) / 2) * 100);
   return (
-    <div className="space-y-0.5">
+    <div className="space-y-1">
       <span className="text-[10px] text-[var(--studio-text-muted)]">
         {label}
       </span>

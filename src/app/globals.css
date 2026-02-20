@@ -2,22 +2,89 @@
 
 :root {
   --studio-bg: #0a0a0a;
-  --studio-surface: #141414;
-  --studio-surface-2: #1e1e1e;
-  --studio-border: #2a2a2a;
-  --studio-border-hover: #3a3a3a;
-  --studio-text: #e8e8e8;
-  --studio-text-secondary: #888888;
-  --studio-text-muted: #555555;
-  --studio-accent: #d4750b;
-  --studio-accent-hover: #e8a54b;
-  --studio-success: #22c55e;
+  --studio-surface: #131313;
+  --studio-surface-2: #1a1a1a;
+  --studio-surface-hover: #1f1f1f;
+  --studio-border: #232323;
+  --studio-border-hover: #363636;
+  --studio-border-active: #4a4a4a;
+  --studio-text: #ececec;
+  --studio-text-secondary: #8a8a8a;
+  --studio-text-muted: #505050;
+  --studio-accent: #c9953c;
+  --studio-accent-hover: #daa84e;
+  --studio-accent-muted: rgba(201, 149, 60, 0.12);
+  --studio-success: #34d474;
+  --studio-success-muted: rgba(52, 212, 116, 0.12);
   --studio-error: #ef4444;
-  --studio-canvas-bg: #1a1a1a;
+  --studio-canvas-bg: #111111;
+  --studio-radius-sm: 4px;
+  --studio-radius-md: 6px;
+  --studio-radius-lg: 8px;
+  --studio-transition: 160ms ease;
 }
 
 body {
   background: var(--studio-bg);
   color: var(--studio-text);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.011em;
+}
+
+/* Global smooth transitions on interactive elements */
+*,
+*::before,
+*::after {
+  transition-property: none;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  transition: color var(--studio-transition),
+    background-color var(--studio-transition),
+    border-color var(--studio-transition),
+    box-shadow var(--studio-transition),
+    opacity var(--studio-transition),
+    transform var(--studio-transition);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--studio-border-hover);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--studio-border-active);
+}
+
+/* Focus ring */
+:focus-visible {
+  outline: 1px solid var(--studio-accent);
+  outline-offset: 1px;
+}
+
+input:focus-visible,
+textarea:focus-visible {
+  outline: none;
+}
+
+/* Selection */
+::selection {
+  background: var(--studio-accent-muted);
+  color: var(--studio-text);
 }
