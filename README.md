@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Studio
 
-## Getting Started
+Zone-based creative pipeline engine. Compose marketing content from briefs through grid layouts, style profiles, and intelligent assembly.
 
-First, run the development server:
+## Quick Start
 
 ```bash
+# Frontend
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Backend (separate terminal)
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r api/requirements.txt
+uvicorn api.main:app --reload --port 8000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How It Works
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Brief** — Describe what you're creating, attach reference images
+2. **Format** — Pick dimensions (Instagram post, story, A4, custom)
+3. **Grid** — Split the canvas into zones (2h, 2v, 3-row, 4-quad, asymmetric)
+4. **Assign** — Give each zone a role (image, text, texture, pattern, solid)
+5. **Compose** — Fill each zone independently with content
+6. **Compile** — Pillow renders all zones into a single image
+7. **Export** — Download the final PNG
 
-## Learn More
+## Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Frontend:** Next.js 16 + TypeScript + Tailwind CSS v4 + react-konva + Zustand
+- **Backend:** Python FastAPI + SQLite + Pillow + Anthropic Claude API
+- **Canvas:** Konva.js for interactive grid editing
+- **Composition:** Pillow for server-side zone rendering
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Style Profiles
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Upload reference images to extract your design DNA:
+- K-means colour clustering (k=8)
+- Claude Vision analysis for typography, composition, texture, mood
+- Profiles inform future compositions
 
-## Deploy on Vercel
+## Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+src/                    # Next.js frontend
+  app/                  # Pages (dashboard, project, profiles)
+  components/           # UI components
+    layout/             # Shell (header, workspace, pipeline nav, canvas)
+    pipeline/           # Step components (brief, format, grid, zones, compile, export)
+    canvas/             # Konva grid editor
+  store/                # Zustand stores (pipeline, app)
+  types/                # TypeScript types
+  lib/                  # API client, utilities
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+api/                    # FastAPI backend
+  routers/              # Endpoints (assets, projects, profiles, compose)
+  services/             # Business logic (style extraction, compositor)
+  database.py           # SQLite schema
+  config.py             # Environment config
+```
