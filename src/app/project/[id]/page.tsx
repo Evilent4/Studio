@@ -62,10 +62,11 @@ export default function ProjectPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen flex-col">
+      <div className="flex h-screen flex-col bg-[var(--studio-bg)]">
         <Header />
-        <div className="flex flex-1 items-center justify-center">
-          <span className="text-sm text-[var(--studio-text-muted)]">Loading project...</span>
+        <div className="flex flex-1 flex-col items-center justify-center gap-3">
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-[var(--studio-border-hover)] border-t-[var(--studio-accent)]" />
+          <span className="text-[13px] text-[var(--studio-text-muted)]">Loading project...</span>
         </div>
       </div>
     );
@@ -73,17 +74,19 @@ export default function ProjectPage() {
 
   if (error) {
     return (
-      <div className="flex h-screen flex-col">
+      <div className="flex h-screen flex-col bg-[var(--studio-bg)]">
         <Header />
-        <div className="flex flex-1 items-center justify-center">
-          <span className="text-sm text-[var(--studio-error)]">{error}</span>
+        <div className="flex flex-1 flex-col items-center justify-center gap-3">
+          <div className="rounded-[var(--studio-radius-md)] border border-[var(--studio-error)]/30 bg-[var(--studio-error)]/8 px-4 py-3">
+            <span className="text-[13px] text-[var(--studio-error)]">{error}</span>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-screen flex-col bg-[var(--studio-bg)]">
       <Header />
       <Workspace />
     </div>

@@ -66,11 +66,11 @@ export function CompileStep() {
 
   if (!format) {
     return (
-      <div className="flex flex-col gap-4 p-4">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--studio-text-secondary)]">
+      <div className="flex flex-col gap-5 p-4">
+        <h2 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--studio-text-muted)]">
           Compile
         </h2>
-        <p className="text-xs text-[var(--studio-text-muted)]">
+        <p className="text-xs leading-relaxed text-[var(--studio-text-muted)]">
           Please complete the Format step first.
         </p>
       </div>
@@ -78,12 +78,12 @@ export function CompileStep() {
   }
 
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--studio-text-secondary)]">
+    <div className="flex flex-col gap-5 p-4">
+      <h2 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--studio-text-muted)]">
         Compile
       </h2>
 
-      <p className="text-xs text-[var(--studio-text-muted)]">
+      <p className="text-xs leading-relaxed text-[var(--studio-text-secondary)]">
         Render all zones into a final composition ({format.width} x{" "}
         {format.height})
       </p>
@@ -92,7 +92,7 @@ export function CompileStep() {
         onClick={handleRender}
         disabled={rendering || zones.length === 0}
         className={cn(
-          "flex items-center justify-center gap-2 w-full rounded-md px-4 py-2 text-sm font-medium transition-colors",
+          "flex items-center justify-center gap-2 w-full rounded-[var(--studio-radius-md)] px-5 py-2.5 text-[13px] font-medium",
           rendering
             ? "bg-[var(--studio-surface-2)] text-[var(--studio-text-muted)] cursor-wait"
             : "bg-[var(--studio-accent)] text-white hover:bg-[var(--studio-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
@@ -105,19 +105,21 @@ export function CompileStep() {
           </>
         ) : (
           <>
-            <Play className="h-4 w-4" />
+            <Play className="h-4 w-4" strokeWidth={1.5} />
             Render Preview
           </>
         )}
       </button>
 
       {error && (
-        <p className="text-xs text-red-400">{error}</p>
+        <div className="flex items-center gap-2 rounded-[var(--studio-radius-md)] border border-[var(--studio-error)]/30 bg-[var(--studio-error)]/8 px-3 py-2.5">
+          <span className="text-xs text-[var(--studio-error)]">{error}</span>
+        </div>
       )}
 
       {renderId && (
         <div className="space-y-3">
-          <div className="overflow-hidden rounded-md border border-[var(--studio-border)]">
+          <div className="overflow-hidden rounded-[var(--studio-radius-lg)] border border-[var(--studio-border)] shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
             <img
               src={`${API_BASE}/compose/render/${renderId}`}
               alt="Rendered composition"
@@ -127,9 +129,9 @@ export function CompileStep() {
 
           <button
             onClick={handleNext}
-            className="flex items-center justify-center gap-2 w-full rounded-md bg-[var(--studio-accent)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--studio-accent-hover)] transition-colors"
+            className="flex items-center justify-center gap-2 w-full rounded-[var(--studio-radius-md)] bg-[var(--studio-accent)] px-5 py-2.5 text-[13px] font-medium text-white hover:bg-[var(--studio-accent-hover)]"
           >
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
             Export
           </button>
         </div>

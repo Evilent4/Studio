@@ -45,19 +45,19 @@ function ImageEditor({ zone }: { zone: Zone }) {
 
   if (hasAsset) {
     return (
-      <div className="space-y-2">
+      <div className="space-y-2.5">
         <img
           src={assetFileUrl(content.asset_id)}
           alt="Zone asset"
-          className="w-full rounded-md border border-[var(--studio-border)] object-cover"
+          className="w-full rounded-[var(--studio-radius-lg)] border border-[var(--studio-border)] object-cover"
           style={{ maxHeight: 160 }}
         />
         <button
           {...getRootProps()}
-          className="flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--studio-border)] bg-[var(--studio-surface-2)] px-3 py-2 text-xs font-medium text-[var(--studio-text-secondary)] hover:border-[var(--studio-border-hover)] transition-colors"
+          className="flex w-full items-center justify-center gap-1.5 rounded-[var(--studio-radius-md)] border border-[var(--studio-border)] bg-[var(--studio-surface-2)] px-3 py-2 text-xs font-medium text-[var(--studio-text-secondary)] hover:border-[var(--studio-border-hover)] hover:bg-[var(--studio-surface-hover)]"
         >
           <input {...getInputProps()} />
-          <Replace className="h-3.5 w-3.5" />
+          <Replace className="h-3.5 w-3.5" strokeWidth={1.5} />
           Replace
         </button>
       </div>
@@ -68,8 +68,10 @@ function ImageEditor({ zone }: { zone: Zone }) {
     <div
       {...getRootProps()}
       className={cn(
-        "flex flex-col items-center justify-center gap-2 rounded-md border border-dashed border-[var(--studio-border)] bg-[var(--studio-surface-2)] p-6 cursor-pointer transition-colors",
-        isDragActive && "border-[var(--studio-accent)] bg-[var(--studio-surface)]"
+        "flex flex-col items-center justify-center gap-2.5 rounded-[var(--studio-radius-lg)] border border-dashed bg-[var(--studio-surface-2)] p-7 cursor-pointer",
+        isDragActive
+          ? "border-[var(--studio-accent)] bg-[var(--studio-accent-muted)]"
+          : "border-[var(--studio-border)] hover:border-[var(--studio-border-hover)] hover:bg-[var(--studio-surface-hover)]"
       )}
     >
       <input {...getInputProps()} />
@@ -77,7 +79,7 @@ function ImageEditor({ zone }: { zone: Zone }) {
         <span className="text-xs text-[var(--studio-text-muted)]">Uploading...</span>
       ) : (
         <>
-          <Upload className="h-5 w-5 text-[var(--studio-text-muted)]" />
+          <Upload className="h-5 w-5 text-[var(--studio-text-muted)]" strokeWidth={1.5} />
           <span className="text-xs text-[var(--studio-text-muted)]">
             Drop an image or click to browse
           </span>
@@ -97,51 +99,57 @@ function TextEditor({ zone }: { zone: Zone }) {
 
   return (
     <div className="space-y-3">
-      <div className="space-y-1">
-        <label className="text-[10px] font-medium text-[var(--studio-text-muted)]">Text</label>
+      <div className="space-y-1.5">
+        <label className="text-[10px] font-medium uppercase tracking-wider text-[var(--studio-text-muted)]">Text</label>
         <textarea
           value={content.text}
           onChange={(e) => update({ text: e.target.value })}
           placeholder="Enter text content..."
           rows={4}
-          className="w-full rounded-md border border-[var(--studio-border)] bg-[var(--studio-surface-2)] px-3 py-2 text-sm text-[var(--studio-text)] placeholder:text-[var(--studio-text-muted)] focus:border-[var(--studio-border-hover)] focus:outline-none resize-none"
+          className="w-full rounded-[var(--studio-radius-md)] border border-[var(--studio-border)] bg-[var(--studio-surface-2)] px-3 py-2.5 text-sm leading-relaxed text-[var(--studio-text)] placeholder:text-[var(--studio-text-muted)] focus:border-[var(--studio-accent)]/40 focus:outline-none resize-none"
         />
       </div>
 
-      <div className="flex gap-2">
+      {/* Mini toolbar row */}
+      <div className="flex gap-2 rounded-[var(--studio-radius-lg)] border border-[var(--studio-border)] bg-[var(--studio-surface)] p-2">
         {/* Font size */}
         <div className="flex-1 space-y-1">
-          <label className="text-[10px] font-medium text-[var(--studio-text-muted)]">Size</label>
+          <label className="text-[10px] font-medium uppercase tracking-wider text-[var(--studio-text-muted)]">Size</label>
           <input
             type="number"
             value={content.size}
             onChange={(e) => update({ size: Number(e.target.value) })}
             min={8}
             max={200}
-            className="w-full rounded-md border border-[var(--studio-border)] bg-[var(--studio-surface-2)] px-2 py-1.5 text-xs text-[var(--studio-text)] focus:border-[var(--studio-border-hover)] focus:outline-none"
+            className="w-full rounded-[var(--studio-radius-md)] border border-[var(--studio-border)] bg-[var(--studio-surface-2)] px-2.5 py-2 text-xs text-[var(--studio-text)] focus:border-[var(--studio-accent)]/40 focus:outline-none"
           />
         </div>
 
         {/* Colour */}
         <div className="space-y-1">
-          <label className="text-[10px] font-medium text-[var(--studio-text-muted)]">Colour</label>
-          <input
-            type="color"
-            value={content.colour}
-            onChange={(e) => update({ colour: e.target.value })}
-            className="h-[30px] w-10 cursor-pointer rounded-md border border-[var(--studio-border)] bg-[var(--studio-surface-2)] p-0.5"
-          />
+          <label className="text-[10px] font-medium uppercase tracking-wider text-[var(--studio-text-muted)]">Colour</label>
+          <div className="flex items-center gap-1.5">
+            <input
+              type="color"
+              value={content.colour}
+              onChange={(e) => update({ colour: e.target.value })}
+              className="h-[30px] w-10 cursor-pointer rounded-[var(--studio-radius-md)] border border-[var(--studio-border)] bg-[var(--studio-surface-2)] p-0.5"
+            />
+            <span className="text-[10px] font-mono text-[var(--studio-text-muted)]">
+              {content.colour}
+            </span>
+          </div>
         </div>
 
         {/* Alignment */}
         <div className="flex-1 space-y-1">
-          <label className="text-[10px] font-medium text-[var(--studio-text-muted)]">Align</label>
+          <label className="text-[10px] font-medium uppercase tracking-wider text-[var(--studio-text-muted)]">Align</label>
           <select
             value={content.alignment}
             onChange={(e) =>
               update({ alignment: e.target.value as "left" | "center" | "right" })
             }
-            className="w-full rounded-md border border-[var(--studio-border)] bg-[var(--studio-surface-2)] px-2 py-1.5 text-xs text-[var(--studio-text)] focus:border-[var(--studio-border-hover)] focus:outline-none"
+            className="w-full rounded-[var(--studio-radius-md)] border border-[var(--studio-border)] bg-[var(--studio-surface-2)] px-2.5 py-2 text-xs text-[var(--studio-text)] focus:border-[var(--studio-accent)]/40 focus:outline-none"
           >
             <option value="left">Left</option>
             <option value="center">Center</option>
@@ -158,9 +166,9 @@ function SolidEditor({ zone }: { zone: Zone }) {
   const content = zone.content as Extract<ZoneContent, { type: "solid" }>;
 
   return (
-    <div className="space-y-1">
-      <label className="text-[10px] font-medium text-[var(--studio-text-muted)]">Fill Colour</label>
-      <div className="flex items-center gap-2">
+    <div className="space-y-1.5">
+      <label className="text-[10px] font-medium uppercase tracking-wider text-[var(--studio-text-muted)]">Fill Colour</label>
+      <div className="flex items-center gap-2.5 rounded-[var(--studio-radius-lg)] border border-[var(--studio-border)] bg-[var(--studio-surface)] p-2.5">
         <input
           type="color"
           value={content.colour}
@@ -169,9 +177,9 @@ function SolidEditor({ zone }: { zone: Zone }) {
               content: { ...content, colour: e.target.value },
             })
           }
-          className="h-8 w-10 cursor-pointer rounded-md border border-[var(--studio-border)] bg-[var(--studio-surface-2)] p-0.5"
+          className="h-8 w-10 cursor-pointer rounded-[var(--studio-radius-md)] border border-[var(--studio-border)] bg-[var(--studio-surface-2)] p-0.5"
         />
-        <span className="text-xs text-[var(--studio-text-muted)] font-mono">
+        <span className="text-xs font-mono text-[var(--studio-text-muted)]">
           {content.colour}
         </span>
       </div>
@@ -205,7 +213,7 @@ export function ZoneComposeStep() {
   const renderEditor = () => {
     if (!selectedZone) {
       return (
-        <p className="text-xs text-[var(--studio-text-muted)]">
+        <p className="text-xs leading-relaxed text-[var(--studio-text-muted)]">
           Select a zone to edit its content.
         </p>
       );
@@ -221,13 +229,13 @@ export function ZoneComposeStep() {
       case "texture":
       case "pattern":
         return (
-          <p className="text-xs text-[var(--studio-text-muted)]">
+          <p className="text-xs leading-relaxed text-[var(--studio-text-muted)]">
             {selectedZone.content.type} controls coming soon.
           </p>
         );
       case "empty":
         return (
-          <p className="text-xs text-[var(--studio-text-muted)]">
+          <p className="text-xs leading-relaxed text-[var(--studio-text-muted)]">
             This zone has no role assigned. Go back to Zone Assignment to set one.
           </p>
         );
@@ -237,13 +245,13 @@ export function ZoneComposeStep() {
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--studio-text-secondary)]">
+    <div className="flex flex-col gap-5 p-4">
+      <h2 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--studio-text-muted)]">
         Zone Composition
       </h2>
 
       {/* Zone selector list */}
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         <label className="text-xs font-medium text-[var(--studio-text-secondary)]">
           Zones
         </label>
@@ -253,14 +261,22 @@ export function ZoneComposeStep() {
               key={zone.id}
               onClick={() => selectZone(zone.id)}
               className={cn(
-                "flex items-center gap-2 rounded-md border px-3 py-2 text-left transition-colors",
+                "flex items-center gap-2.5 rounded-[var(--studio-radius-lg)] border px-3 py-2.5 text-left",
                 zone.id === selectedZoneId
-                  ? "border-[var(--studio-accent)] bg-[var(--studio-surface)]"
-                  : "border-[var(--studio-border)] bg-[var(--studio-surface-2)] hover:border-[var(--studio-border-hover)]"
+                  ? "border-[var(--studio-accent)]/60 bg-[var(--studio-accent-muted)]"
+                  : "border-[var(--studio-border)] bg-[var(--studio-surface-2)] hover:border-[var(--studio-border-hover)] hover:bg-[var(--studio-surface-hover)]"
               )}
             >
               {zone.content.type === "image" && (
-                <ImageIcon className="h-3.5 w-3.5 text-[var(--studio-text-muted)]" />
+                <ImageIcon
+                  className={cn(
+                    "h-3.5 w-3.5",
+                    zone.id === selectedZoneId
+                      ? "text-[var(--studio-accent)]"
+                      : "text-[var(--studio-text-muted)]"
+                  )}
+                  strokeWidth={1.5}
+                />
               )}
               <span className="text-xs font-medium text-[var(--studio-text)]">
                 Zone {zone.zone_order + 1}
@@ -274,18 +290,18 @@ export function ZoneComposeStep() {
       </div>
 
       {/* Per-role editor */}
-      <div className="space-y-2">
+      <div className="space-y-2.5">
         {selectedZone && (
-          <span className="text-xs font-medium text-[var(--studio-text-secondary)]">
+          <label className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--studio-text-muted)]">
             Zone {selectedZone.zone_order + 1} — {selectedZone.role}
-          </span>
+          </label>
         )}
         {renderEditor()}
       </div>
 
       <button
         onClick={handleNext}
-        className="mt-2 w-full rounded-md bg-[var(--studio-accent)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--studio-accent-hover)] transition-colors"
+        className="mt-1 w-full rounded-[var(--studio-radius-md)] bg-[var(--studio-accent)] px-5 py-2.5 text-[13px] font-medium text-white hover:bg-[var(--studio-accent-hover)]"
       >
         Next
       </button>

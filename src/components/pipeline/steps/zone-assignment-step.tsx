@@ -75,18 +75,18 @@ export function ZoneAssignmentStep() {
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--studio-text-secondary)]">
+    <div className="flex flex-col gap-5 p-4">
+      <h2 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--studio-text-muted)]">
         Zone Assignment
       </h2>
 
-      <p className="text-xs text-[var(--studio-text-muted)]">
+      <p className="text-xs leading-relaxed text-[var(--studio-text-muted)]">
         Click a zone on the canvas, then choose its role
       </p>
 
       {/* Selected zone role picker */}
       {selectedZone && (
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           <span className="text-xs font-medium text-[var(--studio-text-secondary)]">
             Zone {selectedZone.zone_order + 1} — currently:{" "}
             <span className="text-[var(--studio-text)]">{selectedZone.role}</span>
@@ -98,13 +98,21 @@ export function ZoneAssignmentStep() {
                 key={role}
                 onClick={() => handleRoleSelect(role)}
                 className={cn(
-                  "flex flex-col items-center gap-1 rounded-md border p-2.5 text-center transition-colors",
+                  "flex flex-col items-center gap-1.5 rounded-[var(--studio-radius-lg)] border p-3 text-center",
                   selectedZone.role === role
-                    ? "border-[var(--studio-accent)] bg-[var(--studio-surface)]"
-                    : "border-[var(--studio-border)] bg-[var(--studio-surface-2)] hover:border-[var(--studio-border-hover)]"
+                    ? "border-[var(--studio-accent)]/60 bg-[var(--studio-accent-muted)] shadow-[0_0_0_1px_var(--studio-accent)]/20"
+                    : "border-[var(--studio-border)] bg-[var(--studio-surface-2)] hover:border-[var(--studio-border-hover)] hover:bg-[var(--studio-surface-hover)]"
                 )}
               >
-                <Icon className="h-4 w-4 text-[var(--studio-text-secondary)]" />
+                <Icon
+                  className={cn(
+                    "h-4 w-4",
+                    selectedZone.role === role
+                      ? "text-[var(--studio-accent)]"
+                      : "text-[var(--studio-text-secondary)]"
+                  )}
+                  strokeWidth={1.5}
+                />
                 <span className="text-[10px] font-medium text-[var(--studio-text)]">
                   {label}
                 </span>
@@ -115,8 +123,8 @@ export function ZoneAssignmentStep() {
       )}
 
       {/* Zone list */}
-      <div className="space-y-1.5">
-        <label className="text-xs font-medium text-[var(--studio-text-secondary)]">
+      <div className="space-y-2">
+        <label className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--studio-text-muted)]">
           All Zones
         </label>
         <div className="flex flex-col gap-1">
@@ -128,13 +136,21 @@ export function ZoneAssignmentStep() {
                 key={zone.id}
                 onClick={() => selectZone(zone.id)}
                 className={cn(
-                  "flex items-center gap-2 rounded-md border px-3 py-2 text-left transition-colors",
+                  "flex items-center gap-2.5 rounded-[var(--studio-radius-lg)] border px-3 py-2.5 text-left",
                   zone.id === selectedZoneId
-                    ? "border-[var(--studio-accent)] bg-[var(--studio-surface)]"
-                    : "border-[var(--studio-border)] bg-[var(--studio-surface-2)] hover:border-[var(--studio-border-hover)]"
+                    ? "border-[var(--studio-accent)]/60 bg-[var(--studio-accent-muted)]"
+                    : "border-[var(--studio-border)] bg-[var(--studio-surface-2)] hover:border-[var(--studio-border-hover)] hover:bg-[var(--studio-surface-hover)]"
                 )}
               >
-                <Icon className="h-3.5 w-3.5 text-[var(--studio-text-muted)]" />
+                <Icon
+                  className={cn(
+                    "h-3.5 w-3.5",
+                    zone.id === selectedZoneId
+                      ? "text-[var(--studio-accent)]"
+                      : "text-[var(--studio-text-muted)]"
+                  )}
+                  strokeWidth={1.5}
+                />
                 <span className="text-xs font-medium text-[var(--studio-text)]">
                   Zone {zone.zone_order + 1}
                 </span>
@@ -150,7 +166,7 @@ export function ZoneAssignmentStep() {
       <button
         onClick={handleNext}
         disabled={!allAssigned}
-        className="mt-2 w-full rounded-md bg-[var(--studio-accent)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--studio-accent-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="mt-1 w-full rounded-[var(--studio-radius-md)] bg-[var(--studio-accent)] px-5 py-2.5 text-[13px] font-medium text-white hover:bg-[var(--studio-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Next
       </button>
