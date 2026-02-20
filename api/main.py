@@ -5,6 +5,7 @@ from database import init_db
 from routers.assets import router as assets_router
 from routers.projects import router as projects_router
 from routers.profiles import router as profiles_router
+from routers.compose import router as compose_router
 
 
 @asynccontextmanager
@@ -25,6 +26,7 @@ app.add_middleware(
 app.include_router(assets_router)
 app.include_router(projects_router)
 app.include_router(profiles_router)
+app.include_router(compose_router)
 
 
 @app.get("/health")

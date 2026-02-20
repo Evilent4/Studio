@@ -6,6 +6,8 @@ import { FormatStep } from "@/components/pipeline/steps/format-step";
 import { GridStep } from "@/components/pipeline/steps/grid-step";
 import { ZoneAssignmentStep } from "@/components/pipeline/steps/zone-assignment-step";
 import { ZoneComposeStep } from "@/components/pipeline/steps/zone-compose-step";
+import { CompileStep } from "@/components/pipeline/steps/compile-step";
+import { ExportStep } from "@/components/pipeline/steps/export-step";
 
 export function StaticPipeline() {
   const currentStep = usePipelineStore((s) => s.currentStep);
@@ -23,6 +25,10 @@ export function StaticPipeline() {
       return <ZoneComposeStep />;
     case 5:
       return <ZoneComposeStep />;
+    case 6:
+      return <CompileStep />;
+    case 7:
+      return <ExportStep />;
     default:
       return (
         <div className="flex flex-col gap-2 p-4">
