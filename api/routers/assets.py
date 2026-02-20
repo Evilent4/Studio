@@ -1,9 +1,10 @@
 import uuid
 import json
 from pathlib import Path
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
+import aiosqlite
 from config import STORAGE_DIR
-from database import get_db
+from database import get_db_dep
 
 router = APIRouter(prefix="/assets", tags=["assets"])
 
@@ -20,8 +21,11 @@ for t in ALLOWED_AUDIO_TYPES:
     MIME_TO_ASSET_TYPE[t] = "audio"
 
 
+MAX_UPLOAD_SIZE = 50 * 1024 * 1024  # 50MB
+
+
 @router.post("/upload")
-async def upload_asset(file: UploadFile = File(...)):
+async def upload_asset(file: UploadFile = File(...), db: aiosqlite.Connection = Depends(get_db_dep)):
     if file.content_type not in MIME_TO_ASSET_TYPE:
         raise HTTPException(400, f"Unsupported file type: {file.content_type}")
 
@@ -32,6 +36,8 @@ async def upload_asset(file: UploadFile = File(...)):
     storage_path.parent.mkdir(parents=True, exist_ok=True)
 
     content = await file.read()
+    if len(content) > MAX_UPLOAD_SIZE:
+        raise HTTPException(status_code=413, detail="File too large (max 50MB)")
     storage_path.write_bytes(content)
 
     metadata = {"original_filename": file.filename}
@@ -43,7 +49,6 @@ async def upload_asset(file: UploadFile = File(...)):
         metadata["path"] = str(storage_path)
         img.close()
 
-    db = await get_db()
     await db.execute(
         """INSERT INTO assets (id, type, path, filename, mime_type, size_bytes, metadata)
            VALUES (?, ?, ?, ?, ?, ?, ?)""",
@@ -51,7 +56,6 @@ async def upload_asset(file: UploadFile = File(...)):
          file.content_type, len(content), json.dumps(metadata)),
     )
     await db.commit()
-    await db.close()
 
     return {
         "id": asset_id,
@@ -63,28 +67,30 @@ async def upload_asset(file: UploadFile = File(...)):
 
 
 @router.get("/{asset_id}")
-async def get_asset(asset_id: str):
-    db = await get_db()
+async def get_asset(asset_id: str, db: aiosqlite.Connection = Depends(get_db_dep)):
     row = await db.execute("SELECT * FROM assets WHERE id = ?", (asset_id,))
     asset = await row.fetchone()
-    await db.close()
 
     if not asset:
         raise HTTPException(404, "Asset not found")
 
-    return dict(asset)
+    result = dict(asset)
+    result.pop("path", None)
+    return result
 
 
 @router.get("/{asset_id}/file")
-async def serve_asset(asset_id: str):
+async def serve_asset(asset_id: str, db: aiosqlite.Connection = Depends(get_db_dep)):
     from fastapi.responses import FileResponse
 
-    db = await get_db()
     row = await db.execute("SELECT path, mime_type FROM assets WHERE id = ?", (asset_id,))
     asset = await row.fetchone()
-    await db.close()
 
     if not asset:
         raise HTTPException(404, "Asset not found")
+
+    resolved = Path(asset["path"]).resolve()
+    if not str(resolved).startswith(str(STORAGE_DIR.resolve())):
+        raise HTTPException(status_code=403, detail="Access denied")
 
     return FileResponse(asset["path"], media_type=asset["mime_type"])

@@ -8,7 +8,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.78.0",
     "clsx": "^2.1.1",
     "konva": "^10.2.0",
     "lucide-react": "^0.575.0",

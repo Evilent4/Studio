@@ -4,8 +4,7 @@ import { useState } from "react";
 import { Loader2, Play, ArrowRight } from "lucide-react";
 import { usePipelineStore } from "@/store/pipeline";
 import { cn } from "@/lib/utils";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+import { API_BASE } from "@/lib/api";
 
 export function CompileStep() {
   const { zones, steps, updateStepOutput, updateStepStatus, setCurrentStep } =

@@ -72,6 +72,14 @@ async def get_db() -> aiosqlite.Connection:
     return db
 
 
+async def get_db_dep():
+    db = await get_db()
+    try:
+        yield db
+    finally:
+        await db.close()
+
+
 async def init_db():
     db = await get_db()
     await db.executescript(SCHEMA)

@@ -2,12 +2,13 @@
 
 import { useRef, useMemo } from "react";
 import { Stage, Layer, Rect, Group } from "react-konva";
+import Konva from "konva";
 import { v4 as uuid } from "uuid";
 import { usePipelineStore } from "@/store/pipeline";
 import type { Zone } from "@/types";
-import type { GRID_PRESETS } from "@/types";
+import { GRID_PRESETS } from "@/types";
 
-type GridPresetKey = keyof typeof import("@/types").GRID_PRESETS;
+type GridPresetKey = keyof typeof GRID_PRESETS;
 
 interface GridEditorProps {
   width: number;
@@ -98,7 +99,7 @@ export function generateGrid(
 }
 
 export function GridEditor({ width, height, canvasWidth, canvasHeight }: GridEditorProps) {
-  const stageRef = useRef<any>(null);
+  const stageRef = useRef<Konva.Stage>(null);
   const { zones, selectedZoneId, selectZone } = usePipelineStore();
 
   // Calculate scale to fit the canvas within the stage area

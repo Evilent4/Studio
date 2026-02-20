@@ -1,8 +1,9 @@
 import uuid
 import json
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
-from database import get_db
+import aiosqlite
+from database import get_db_dep
 from services.style_extraction import extract_colours, analyze_with_vision, synthesize_profile
 
 router = APIRouter(prefix="/profiles", tags=["profiles"])
@@ -14,30 +15,25 @@ class CreateProfileRequest(BaseModel):
 
 
 @router.post("/")
-async def create_profile(req: CreateProfileRequest) -> dict:
+async def create_profile(req: CreateProfileRequest, db: aiosqlite.Connection = Depends(get_db_dep)) -> dict:
     profile_id = str(uuid.uuid4())
-    db = await get_db()
     await db.execute(
         "INSERT INTO style_profiles (id, name, source_images) VALUES (?, ?, ?)",
         (profile_id, req.name, json.dumps(req.source_image_paths)),
     )
     await db.commit()
-    await db.close()
     return {"id": profile_id, "name": req.name, "status": "created"}
 
 
 @router.post("/{profile_id}/analyze")
-async def analyze_profile(profile_id: str) -> dict:
-    db = await get_db()
+async def analyze_profile(profile_id: str, db: aiosqlite.Connection = Depends(get_db_dep)) -> dict:
     row = await db.execute("SELECT * FROM style_profiles WHERE id = ?", (profile_id,))
     profile = await row.fetchone()
     if not profile:
-        await db.close()
         raise HTTPException(404, "Profile not found")
 
     source_images = json.loads(profile["source_images"])
     if not source_images:
-        await db.close()
         raise HTTPException(400, "No source images to analyze")
 
     colour_results = []
@@ -59,7 +55,6 @@ async def analyze_profile(profile_id: str) -> dict:
     valid_colours = [c for c in colour_results if "error" not in c]
 
     if not valid_vision and not valid_colours:
-        await db.close()
         raise HTTPException(500, "All image analyses failed")
 
     # If no valid vision results, create a minimal profile from colours only
@@ -105,14 +100,12 @@ async def analyze_profile(profile_id: str) -> dict:
          json.dumps(synthesized["mood"]), profile_id),
     )
     await db.commit()
-    await db.close()
 
     return {"id": profile_id, "status": "analyzed", "profile": synthesized}
 
 
 @router.get("/")
-async def list_profiles():
-    db = await get_db()
+async def list_profiles(db: aiosqlite.Connection = Depends(get_db_dep)):
     rows = await db.execute("SELECT * FROM style_profiles ORDER BY updated_at DESC")
     profiles = []
     async for row in rows:
@@ -121,16 +114,13 @@ async def list_profiles():
             if isinstance(p.get(field), str):
                 p[field] = json.loads(p[field])
         profiles.append(p)
-    await db.close()
     return profiles
 
 
 @router.get("/{profile_id}")
-async def get_profile(profile_id: str):
-    db = await get_db()
+async def get_profile(profile_id: str, db: aiosqlite.Connection = Depends(get_db_dep)):
     row = await db.execute("SELECT * FROM style_profiles WHERE id = ?", (profile_id,))
     profile = await row.fetchone()
-    await db.close()
     if not profile:
         raise HTTPException(404, "Profile not found")
     p = dict(profile)

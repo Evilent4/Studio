@@ -190,14 +190,16 @@ export function ZoneComposeStep() {
     selectZone,
     updateStepStatus,
     setCurrentStep,
+    currentStep,
   } = usePipelineStore();
 
   const selectedZone = zones.find((z) => z.id === selectedZoneId) ?? null;
 
   const handleNext = () => {
-    updateStepStatus(4, "completed");
-    updateStepStatus(5, "active");
-    setCurrentStep(5);
+    updateStepStatus(currentStep, "completed");
+    const nextStep = currentStep + 1;
+    updateStepStatus(nextStep, "active");
+    setCurrentStep(nextStep);
   };
 
   const renderEditor = () => {

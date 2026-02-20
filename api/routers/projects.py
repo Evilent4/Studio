@@ -1,8 +1,9 @@
 import uuid
 import json
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
-from database import get_db
+import aiosqlite
+from database import get_db_dep
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 
@@ -54,7 +55,7 @@ class CreateProjectRequest(BaseModel):
 
 
 @router.post("/")
-async def create_project(req: CreateProjectRequest):
+async def create_project(req: CreateProjectRequest, db: aiosqlite.Connection = Depends(get_db_dep)):
     if req.pipeline_type not in PIPELINE_STEPS:
         raise HTTPException(400, f"Invalid pipeline type: {req.pipeline_type}")
 
@@ -62,7 +63,6 @@ async def create_project(req: CreateProjectRequest):
     pipeline_id = str(uuid.uuid4())
     steps = PIPELINE_STEPS[req.pipeline_type]
 
-    db = await get_db()
     await db.execute(
         """INSERT INTO projects (id, name, pipeline_type, style_profile_id, brief)
            VALUES (?, ?, ?, ?, ?)""",
@@ -74,27 +74,22 @@ async def create_project(req: CreateProjectRequest):
         (pipeline_id, project_id, json.dumps(steps)),
     )
     await db.commit()
-    await db.close()
 
     return {"id": project_id, "name": req.name, "pipeline_type": req.pipeline_type}
 
 
 @router.get("/")
-async def list_projects():
-    db = await get_db()
+async def list_projects(db: aiosqlite.Connection = Depends(get_db_dep)):
     rows = await db.execute("SELECT * FROM projects ORDER BY created_at DESC")
     projects = [dict(row) async for row in rows]
-    await db.close()
     return projects
 
 
 @router.get("/{project_id}")
-async def get_project(project_id: str):
-    db = await get_db()
+async def get_project(project_id: str, db: aiosqlite.Connection = Depends(get_db_dep)):
     row = await db.execute("SELECT * FROM projects WHERE id = ?", (project_id,))
     project = await row.fetchone()
     if not project:
-        await db.close()
         raise HTTPException(404, "Project not found")
 
     pipe_row = await db.execute(
@@ -106,7 +101,6 @@ async def get_project(project_id: str):
         "SELECT * FROM zones WHERE project_id = ? ORDER BY zone_order", (project_id,)
     )
     zones = [dict(z) async for z in zones_rows]
-    await db.close()
 
     return {
         **dict(project),
