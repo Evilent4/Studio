@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+:root {
+  --studio-bg: #0a0a0a;
+  --studio-surface: #141414;
+  --studio-surface-2: #1e1e1e;
+  --studio-border: #2a2a2a;
+  --studio-border-hover: #3a3a3a;
+  --studio-text: #e8e8e8;
+  --studio-text-secondary: #888888;
+  --studio-text-muted: #555555;
+  --studio-accent: #d4750b;
+  --studio-accent-hover: #e8a54b;
+  --studio-success: #22c55e;
+  --studio-error: #ef4444;
+  --studio-canvas-bg: #1a1a1a;
+}
+
+body {
+  background: var(--studio-bg);
+  color: var(--studio-text);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
