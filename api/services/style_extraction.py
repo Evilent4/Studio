@@ -4,7 +4,7 @@ from pathlib import Path
 from PIL import Image
 import numpy as np
 from anthropic import Anthropic
-from config import ANTHROPIC_API_KEY
+from api.config import ANTHROPIC_API_KEY
 
 client = Anthropic(api_key=ANTHROPIC_API_KEY) if ANTHROPIC_API_KEY else None
 

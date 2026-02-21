@@ -3,8 +3,8 @@ import json
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 import aiosqlite
-from database import get_db_dep
-from services.style_extraction import extract_colours, analyze_with_vision, synthesize_profile
+from api.database import get_db_dep
+from api.services.style_extraction import extract_colours, analyze_with_vision, synthesize_profile
 
 router = APIRouter(prefix="/profiles", tags=["profiles"])
 

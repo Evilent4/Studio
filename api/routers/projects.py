@@ -3,7 +3,7 @@ import json
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 import aiosqlite
-from database import get_db_dep
+from api.database import get_db_dep
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 

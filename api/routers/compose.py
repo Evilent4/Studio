@@ -3,8 +3,8 @@ import uuid
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
-from services.compositor import compose_zones
-from config import STORAGE_DIR
+from api.services.compositor import compose_zones
+from api.config import STORAGE_DIR
 
 router = APIRouter(prefix="/compose", tags=["compose"])
 
