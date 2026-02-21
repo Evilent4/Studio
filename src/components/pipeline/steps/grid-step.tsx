@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { Check } from "lucide-react";
 import { GRID_PRESETS } from "@/types";
 import { usePipelineStore } from "@/store/pipeline";
 import { generateGrid } from "@/components/canvas/grid-editor";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type GridPresetKey = keyof typeof GRID_PRESETS;
@@ -54,7 +56,7 @@ export function GridStep() {
         Grid Layout
       </h2>
 
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-2.5">
         {(Object.entries(GRID_PRESETS) as [GridPresetKey, (typeof GRID_PRESETS)[GridPresetKey]][]).map(
           ([key, preset]) => {
             const isSelected = selected === key;
@@ -63,12 +65,17 @@ export function GridStep() {
                 key={key}
                 onClick={() => handleSelect(key)}
                 className={cn(
-                  "flex flex-col items-center gap-2.5 rounded-[var(--studio-radius-lg)] border p-3.5 text-center",
+                  "group relative flex flex-col items-center gap-2.5 rounded-[var(--studio-radius-lg)] border p-3.5 text-center transition-all active:scale-[0.97]",
                   isSelected
                     ? "border-[var(--studio-accent)]/60 bg-[var(--studio-accent-muted)] shadow-[0_0_0_1px_var(--studio-accent)]/20"
                     : "border-[var(--studio-border)] bg-[var(--studio-surface-2)] hover:border-[var(--studio-border-hover)] hover:bg-[var(--studio-surface-hover)]"
                 )}
               >
+                {isSelected && (
+                  <span className="absolute top-2 right-2 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--studio-accent)]">
+                    <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />
+                  </span>
+                )}
                 <GridPreview presetKey={key} isSelected={isSelected} />
                 <span className="text-xs font-medium text-[var(--studio-text)]">
                   {preset.label}
@@ -79,13 +86,9 @@ export function GridStep() {
         )}
       </div>
 
-      <button
-        onClick={handleNext}
-        disabled={!selected}
-        className="mt-1 w-full rounded-[var(--studio-radius-md)] bg-[var(--studio-accent)] px-4 py-2.5 text-[13px] font-medium text-white hover:bg-[var(--studio-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
-      >
+      <Button onClick={handleNext} disabled={!selected} className="mt-1 w-full">
         Next
-      </button>
+      </Button>
     </div>
   );
 }
@@ -93,10 +96,10 @@ export function GridStep() {
 /** Small visual preview of a grid preset */
 function GridPreview({ presetKey, isSelected }: { presetKey: GridPresetKey; isSelected: boolean }) {
   const blockClass = cn(
-    "rounded-[2px]",
+    "rounded-[2px] transition-colors",
     isSelected
       ? "bg-[var(--studio-accent)]/30"
-      : "bg-[var(--studio-border-hover)]"
+      : "bg-[var(--studio-border-hover)] group-hover:bg-[var(--studio-border-active)]"
   );
 
   const previewMap: Record<GridPresetKey, React.ReactNode> = {

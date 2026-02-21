@@ -2,16 +2,17 @@
 
 import { ImageIcon, Type, Layers, Grid3X3, Square, X } from "lucide-react";
 import { usePipelineStore } from "@/store/pipeline";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { ZoneRole, ZoneContent } from "@/types";
 
-const ROLE_OPTIONS: { role: ZoneRole; label: string; icon: React.ElementType }[] = [
-  { role: "image", label: "Image", icon: ImageIcon },
-  { role: "text", label: "Text", icon: Type },
-  { role: "texture", label: "Texture", icon: Layers },
-  { role: "pattern", label: "Pattern", icon: Grid3X3 },
-  { role: "solid", label: "Solid", icon: Square },
-  { role: "empty", label: "Empty", icon: X },
+const ROLE_OPTIONS: { role: ZoneRole; label: string; icon: React.ElementType; description: string }[] = [
+  { role: "image", label: "Image", icon: ImageIcon, description: "Photo or graphic" },
+  { role: "text", label: "Text", icon: Type, description: "Typography" },
+  { role: "texture", label: "Texture", icon: Layers, description: "Generated texture" },
+  { role: "pattern", label: "Pattern", icon: Grid3X3, description: "Repeating pattern" },
+  { role: "solid", label: "Solid", icon: Square, description: "Flat colour fill" },
+  { role: "empty", label: "Empty", icon: X, description: "No content" },
 ];
 
 function defaultContentForRole(role: ZoneRole): ZoneContent {
@@ -93,12 +94,12 @@ export function ZoneAssignmentStep() {
           </span>
 
           <div className="grid grid-cols-3 gap-2">
-            {ROLE_OPTIONS.map(({ role, label, icon: Icon }) => (
+            {ROLE_OPTIONS.map(({ role, label, icon: Icon, description }) => (
               <button
                 key={role}
                 onClick={() => handleRoleSelect(role)}
                 className={cn(
-                  "flex flex-col items-center gap-1.5 rounded-[var(--studio-radius-lg)] border p-3 text-center",
+                  "flex flex-col items-center gap-1 rounded-[var(--studio-radius-lg)] border p-3 text-center transition-all active:scale-[0.95]",
                   selectedZone.role === role
                     ? "border-[var(--studio-accent)]/60 bg-[var(--studio-accent-muted)] shadow-[0_0_0_1px_var(--studio-accent)]/20"
                     : "border-[var(--studio-border)] bg-[var(--studio-surface-2)] hover:border-[var(--studio-border-hover)] hover:bg-[var(--studio-surface-hover)]"
@@ -115,6 +116,9 @@ export function ZoneAssignmentStep() {
                 />
                 <span className="text-[10px] font-medium text-[var(--studio-text)]">
                   {label}
+                </span>
+                <span className="text-[8px] leading-tight text-[var(--studio-text-muted)]">
+                  {description}
                 </span>
               </button>
             ))}
@@ -136,7 +140,7 @@ export function ZoneAssignmentStep() {
                 key={zone.id}
                 onClick={() => selectZone(zone.id)}
                 className={cn(
-                  "flex items-center gap-2.5 rounded-[var(--studio-radius-lg)] border px-3 py-2.5 text-left",
+                  "flex items-center gap-2.5 rounded-[var(--studio-radius-lg)] border px-3 py-2.5 text-left transition-all active:scale-[0.97]",
                   zone.id === selectedZoneId
                     ? "border-[var(--studio-accent)]/60 bg-[var(--studio-accent-muted)]"
                     : "border-[var(--studio-border)] bg-[var(--studio-surface-2)] hover:border-[var(--studio-border-hover)] hover:bg-[var(--studio-surface-hover)]"
@@ -154,7 +158,14 @@ export function ZoneAssignmentStep() {
                 <span className="text-xs font-medium text-[var(--studio-text)]">
                   Zone {zone.zone_order + 1}
                 </span>
-                <span className="ml-auto text-[10px] text-[var(--studio-text-muted)]">
+                <span
+                  className={cn(
+                    "ml-auto rounded-full px-1.5 py-0.5 text-[10px]",
+                    zone.role === "empty"
+                      ? "bg-[var(--studio-surface)] text-[var(--studio-text-muted)]"
+                      : "bg-[var(--studio-success-muted)] text-[var(--studio-success)]"
+                  )}
+                >
                   {zone.role}
                 </span>
               </button>
@@ -163,13 +174,9 @@ export function ZoneAssignmentStep() {
         </div>
       </div>
 
-      <button
-        onClick={handleNext}
-        disabled={!allAssigned}
-        className="mt-1 w-full rounded-[var(--studio-radius-md)] bg-[var(--studio-accent)] px-5 py-2.5 text-[13px] font-medium text-white hover:bg-[var(--studio-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
-      >
+      <Button onClick={handleNext} disabled={!allAssigned} className="mt-1 w-full">
         Next
-      </button>
+      </Button>
     </div>
   );
 }

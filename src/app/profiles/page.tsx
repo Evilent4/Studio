@@ -2,9 +2,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Upload, Palette, Type, Loader2, Check, Trash2 } from "lucide-react";
+import { Upload, Palette, Type, Loader2, Check, Trash2, Sparkles } from "lucide-react";
 import { Header } from "@/components/layout/header";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Button } from "@/components/ui/button";
 import { apiGet, apiPost, uploadAsset, assetFileUrl } from "@/lib/api";
+import { useToastStore } from "@/store/toast";
 import type { StyleProfile } from "@/types";
 
 interface ProfileListItem extends StyleProfile {
@@ -52,6 +55,8 @@ export default function ProfilesPage() {
     setPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const addToast = useToastStore((s) => s.addToast);
+
   const handleCreateAndAnalyze = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || files.length === 0) return;
@@ -85,9 +90,12 @@ export default function ProfilesPage() {
       setFiles([]);
       setPreviews([]);
       setAnalyzing(false);
+      addToast("success", `Style profile "${name.trim()}" created and analyzed.`);
       await loadProfiles();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      const msg = err instanceof Error ? err.message : "Something went wrong";
+      setError(msg);
+      addToast("error", msg);
       setCreating(false);
       setAnalyzing(false);
     }
@@ -168,44 +176,36 @@ export default function ProfilesPage() {
                 <p className="text-sm text-[var(--studio-error)]">{error}</p>
               )}
 
-              <button
+              <Button
                 type="submit"
                 disabled={creating || analyzing || !name.trim() || files.length === 0}
-                className="flex items-center gap-2 rounded-[var(--studio-radius-md)] bg-[var(--studio-accent)] px-5 py-2.5 text-[13px] font-medium text-white hover:bg-[var(--studio-accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+                loading={creating || analyzing}
+                icon={!creating && !analyzing ? <Palette /> : undefined}
               >
-                {creating ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Uploading...
-                  </>
-                ) : analyzing ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Analyzing style...
-                  </>
-                ) : (
-                  <>
-                    <Palette className="h-4 w-4" />
-                    Create &amp; Analyze
-                  </>
-                )}
-              </button>
+                {creating ? "Uploading..." : analyzing ? "Analyzing style..." : "Create & Analyze"}
+              </Button>
             </form>
           </section>
 
           {/* Existing Profiles */}
-          {profiles.length > 0 && (
-            <section className="space-y-5">
-              <h2 className="text-lg font-semibold tracking-tight">
-                Existing Profiles
-              </h2>
+          <section className="space-y-5">
+            <h2 className="text-lg font-semibold tracking-tight">
+              Existing Profiles
+            </h2>
+            {profiles.length === 0 ? (
+              <EmptyState
+                icon={<Sparkles />}
+                title="No style profiles"
+                description="Upload reference images above to extract your visual style. Profiles capture colours, typography, mood, and composition."
+              />
+            ) : (
               <div className="grid gap-4 sm:grid-cols-2">
                 {profiles.map((profile) => (
                   <ProfileCard key={profile.id} profile={profile} />
                 ))}
               </div>
-            </section>
-          )}
+            )}
+          </section>
         </div>
       </main>
     </div>

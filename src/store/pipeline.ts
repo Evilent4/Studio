@@ -3,6 +3,7 @@ import type { PipelineStep, Zone, StepStatus } from "@/types";
 
 interface PipelineStore {
   projectId: string | null;
+  projectName: string | null;
   currentStep: number;
   steps: PipelineStep[];
   zones: Zone[];
@@ -10,7 +11,8 @@ interface PipelineStore {
   history: Array<{ steps: PipelineStep[]; zones: Zone[] }>;
   historyIndex: number;
 
-  setProject: (projectId: string, steps: PipelineStep[]) => void;
+  setProject: (projectId: string, steps: PipelineStep[], name?: string) => void;
+  setProjectName: (name: string) => void;
   setCurrentStep: (step: number) => void;
   updateStepStatus: (stepNumber: number, status: StepStatus) => void;
   updateStepOutput: (stepNumber: number, output: Record<string, unknown>) => void;
@@ -25,6 +27,7 @@ interface PipelineStore {
 
 export const usePipelineStore = create<PipelineStore>((set, get) => ({
   projectId: null,
+  projectName: null,
   currentStep: 0,
   steps: [],
   zones: [],
@@ -32,8 +35,10 @@ export const usePipelineStore = create<PipelineStore>((set, get) => ({
   history: [],
   historyIndex: -1,
 
-  setProject: (projectId, steps) =>
-    set({ projectId, steps, currentStep: 0, zones: [], selectedZoneId: null, history: [], historyIndex: -1 }),
+  setProject: (projectId, steps, name) =>
+    set({ projectId, projectName: name ?? null, steps, currentStep: 0, zones: [], selectedZoneId: null, history: [], historyIndex: -1 }),
+
+  setProjectName: (name) => set({ projectName: name }),
 
   setCurrentStep: (step) => set({ currentStep: step }),
 
@@ -96,5 +101,5 @@ export const usePipelineStore = create<PipelineStore>((set, get) => ({
     }),
 
   reset: () =>
-    set({ projectId: null, currentStep: 0, steps: [], zones: [], selectedZoneId: null, history: [], historyIndex: -1 }),
+    set({ projectId: null, projectName: null, currentStep: 0, steps: [], zones: [], selectedZoneId: null, history: [], historyIndex: -1 }),
 }));

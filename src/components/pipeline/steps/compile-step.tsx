@@ -3,12 +3,15 @@
 import { useState } from "react";
 import { Loader2, Play, ArrowRight } from "lucide-react";
 import { usePipelineStore } from "@/store/pipeline";
+import { useToastStore } from "@/store/toast";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { API_BASE } from "@/lib/api";
 
 export function CompileStep() {
   const { zones, steps, updateStepOutput, updateStepStatus, setCurrentStep } =
     usePipelineStore();
+  const addToast = useToastStore((s) => s.addToast);
 
   const step1Output = steps[1]?.output;
   const format = step1Output?.format as
@@ -52,8 +55,11 @@ export function CompileStep() {
       setRenderId(data.render_id);
       updateStepOutput(6, { render_id: data.render_id });
       updateStepStatus(6, "completed");
+      addToast("success", "Composition rendered successfully");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Render failed");
+      const msg = err instanceof Error ? err.message : "Render failed";
+      setError(msg);
+      addToast("error", msg);
     } finally {
       setRendering(false);
     }
@@ -88,28 +94,15 @@ export function CompileStep() {
         {format.height})
       </p>
 
-      <button
+      <Button
         onClick={handleRender}
-        disabled={rendering || zones.length === 0}
-        className={cn(
-          "flex items-center justify-center gap-2 w-full rounded-[var(--studio-radius-md)] px-5 py-2.5 text-[13px] font-medium",
-          rendering
-            ? "bg-[var(--studio-surface-2)] text-[var(--studio-text-muted)] cursor-wait"
-            : "bg-[var(--studio-accent)] text-white hover:bg-[var(--studio-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
-        )}
+        disabled={zones.length === 0}
+        loading={rendering}
+        icon={!rendering ? <Play strokeWidth={1.5} /> : undefined}
+        className="w-full"
       >
-        {rendering ? (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Rendering...
-          </>
-        ) : (
-          <>
-            <Play className="h-4 w-4" strokeWidth={1.5} />
-            Render Preview
-          </>
-        )}
-      </button>
+        {rendering ? "Rendering..." : "Render Preview"}
+      </Button>
 
       {error && (
         <div className="flex items-center gap-2 rounded-[var(--studio-radius-md)] border border-[var(--studio-error)]/30 bg-[var(--studio-error)]/8 px-3 py-2.5">
@@ -127,13 +120,13 @@ export function CompileStep() {
             />
           </div>
 
-          <button
+          <Button
             onClick={handleNext}
-            className="flex items-center justify-center gap-2 w-full rounded-[var(--studio-radius-md)] bg-[var(--studio-accent)] px-5 py-2.5 text-[13px] font-medium text-white hover:bg-[var(--studio-accent-hover)]"
+            icon={<ArrowRight strokeWidth={1.5} />}
+            className="w-full"
           >
-            <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
             Export
-          </button>
+          </Button>
         </div>
       )}
     </div>

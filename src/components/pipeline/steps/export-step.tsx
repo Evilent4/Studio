@@ -2,10 +2,13 @@
 
 import { Download, CheckCircle2 } from "lucide-react";
 import { usePipelineStore } from "@/store/pipeline";
+import { useToastStore } from "@/store/toast";
+import { Button } from "@/components/ui/button";
 import { API_BASE } from "@/lib/api";
 
 export function ExportStep() {
   const { steps, updateStepStatus } = usePipelineStore();
+  const addToast = useToastStore((s) => s.addToast);
 
   const renderId = (steps[6]?.output?.render_id as string) || null;
   const isCompleted = steps[7]?.status === "completed";
@@ -21,6 +24,7 @@ export function ExportStep() {
     document.body.removeChild(link);
 
     updateStepStatus(7, "completed");
+    addToast("success", "Download started");
   };
 
   if (!renderId) {
@@ -59,13 +63,14 @@ export function ExportStep() {
         />
       </div>
 
-      <button
+      <Button
         onClick={handleDownload}
-        className="flex items-center justify-center gap-2 w-full rounded-[var(--studio-radius-md)] bg-[var(--studio-accent)] px-5 py-3 text-[13px] font-medium text-white hover:bg-[var(--studio-accent-hover)] active:scale-[0.98]"
+        icon={<Download strokeWidth={1.5} />}
+        size="lg"
+        className="w-full"
       >
-        <Download className="h-4 w-4" strokeWidth={1.5} />
         Download PNG
-      </button>
+      </Button>
     </div>
   );
 }

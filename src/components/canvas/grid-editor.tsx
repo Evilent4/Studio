@@ -18,11 +18,29 @@ interface GridEditorProps {
 }
 
 const PADDING = 40;
-const ZONE_DEFAULT_FILL = "#252525";
-const ZONE_HOVER_FILL = "#2a2a2a";
-const ZONE_SELECTED_FILL = "#2d2518";
-const BORDER_DEFAULT = "#333333";
-const BORDER_SELECTED = "#d4750b";
+
+/* --- Resolve CSS custom properties at runtime for Konva (canvas) --- */
+function getCssVar(name: string, fallback: string): string {
+  if (typeof document === "undefined") return fallback;
+  const value = getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
+    .trim();
+  return value || fallback;
+}
+
+function getColors() {
+  return {
+    zoneDefault: getCssVar("--studio-surface-2", "#1a1a1a"),
+    zoneSelected: getCssVar("--studio-accent-muted", "#2d2518").replace(
+      /rgba?\([^)]+\)/,
+      // accent-muted is rgba, fall back to a solid approximation
+      "#2a2010"
+    ),
+    borderDefault: getCssVar("--studio-border", "#232323"),
+    borderSelected: getCssVar("--studio-accent", "#c9953c"),
+    canvasBg: getCssVar("--studio-surface-2", "#1a1a1a"),
+  };
+}
 
 export function generateGrid(
   preset: GridPresetKey,
@@ -101,6 +119,9 @@ export function GridEditor({ width, height, canvasWidth, canvasHeight }: GridEdi
   const stageRef = useRef<Konva.Stage>(null);
   const { zones, selectedZoneId, selectZone } = usePipelineStore();
 
+  // Resolve CSS variables once per render
+  const colors = useMemo(() => getColors(), []);
+
   // Calculate scale to fit the canvas within the stage area
   const { scale, offsetX, offsetY } = useMemo(() => {
     const availableW = width - PADDING * 2;
@@ -127,7 +148,7 @@ export function GridEditor({ width, height, canvasWidth, canvasHeight }: GridEdi
             y={0}
             width={canvasWidth}
             height={canvasHeight}
-            fill="#1a1a1a"
+            fill={colors.canvasBg}
             cornerRadius={2}
           />
           {/* Zones */}
@@ -140,8 +161,8 @@ export function GridEditor({ width, height, canvasWidth, canvasHeight }: GridEdi
                 y={zone.bounds.y}
                 width={zone.bounds.width}
                 height={zone.bounds.height}
-                fill={isSelected ? ZONE_SELECTED_FILL : ZONE_DEFAULT_FILL}
-                stroke={isSelected ? BORDER_SELECTED : BORDER_DEFAULT}
+                fill={isSelected ? colors.zoneSelected : colors.zoneDefault}
+                stroke={isSelected ? colors.borderSelected : colors.borderDefault}
                 strokeWidth={isSelected ? 2 / scale : 1 / scale}
                 cornerRadius={2}
                 onClick={() => handleZoneClick(zone.id)}

@@ -46,7 +46,7 @@ export default function ProjectPage() {
       try {
         const project = await apiGet<ProjectResponse>(`/projects/${params.id}`);
         const steps = parseSteps(project.pipeline?.steps);
-        setProject(project.id, steps);
+        setProject(project.id, steps, project.name);
         if (project.pipeline?.current_step != null) {
           setCurrentStep(project.pipeline.current_step);
         }

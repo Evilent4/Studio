@@ -5,6 +5,7 @@ import { useDropzone } from "react-dropzone";
 import { Upload, ImageIcon } from "lucide-react";
 import { usePipelineStore } from "@/store/pipeline";
 import { uploadAsset } from "@/lib/api";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export function BriefStep() {
@@ -64,7 +65,7 @@ export function BriefStep() {
           onChange={(e) => setBrief(e.target.value)}
           placeholder="Describe the creative direction, mood, and purpose..."
           rows={5}
-          className="w-full rounded-[var(--studio-radius-md)] border border-[var(--studio-border)] bg-[var(--studio-surface-2)] px-3 py-2.5 text-sm leading-relaxed text-[var(--studio-text)] placeholder:text-[var(--studio-text-muted)] focus:border-[var(--studio-accent)]/40 focus:outline-none resize-none"
+          className="w-full rounded-[var(--studio-radius-md)] border border-[var(--studio-border)] bg-[var(--studio-surface-2)] px-3 py-2.5 text-sm leading-relaxed text-[var(--studio-text)] placeholder:text-[var(--studio-text-muted)] focus:border-[var(--studio-accent)]/50 focus:outline-none resize-none transition-colors"
         />
       </div>
 
@@ -75,7 +76,7 @@ export function BriefStep() {
         <div
           {...getRootProps()}
           className={cn(
-            "flex flex-col items-center justify-center gap-2.5 rounded-[var(--studio-radius-lg)] border border-dashed bg-[var(--studio-surface-2)] p-7 cursor-pointer",
+            "flex flex-col items-center justify-center gap-2.5 rounded-[var(--studio-radius-lg)] border border-dashed bg-[var(--studio-surface-2)] p-7 cursor-pointer transition-colors",
             isDragActive
               ? "border-[var(--studio-accent)] bg-[var(--studio-accent-muted)]"
               : "border-[var(--studio-border)] hover:border-[var(--studio-border-hover)] hover:bg-[var(--studio-surface-hover)]"
@@ -94,19 +95,16 @@ export function BriefStep() {
           )}
         </div>
         {referenceIds.length > 0 && (
-          <div className="flex items-center gap-1.5 text-xs text-[var(--studio-text-secondary)]">
+          <div className="flex items-center gap-1.5 rounded-[var(--studio-radius-md)] bg-[var(--studio-success-muted)] px-2.5 py-1.5 text-xs text-[var(--studio-success)]">
             <ImageIcon className="h-3.5 w-3.5" />
             <span>{referenceIds.length} reference{referenceIds.length !== 1 ? "s" : ""} uploaded</span>
           </div>
         )}
       </div>
 
-      <button
-        onClick={handleNext}
-        className="mt-1 w-full rounded-[var(--studio-radius-md)] bg-[var(--studio-accent)] px-4 py-2.5 text-[13px] font-medium text-white hover:bg-[var(--studio-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
-      >
+      <Button onClick={handleNext} className="mt-1 w-full">
         Next
-      </button>
+      </Button>
     </div>
   );
 }
